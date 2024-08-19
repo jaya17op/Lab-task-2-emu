@@ -1,0 +1,56 @@
+org 100h            ; Set the start address of the program
+
+num1 dw 5678h       ; First 16-bit number (hexadecimal)
+num2 dw 1234h 
+start:
+    mov ax, num1    ; Load the first number into AX
+    add ax, num2   
+    mov bx, ax     
+    mov ah, al      ; Copy AL to AH
+    and ah, 0F0h    ; Mask the lower nibble
+    shr ah, 4       ; Shift right by 4 to get the upper nibble
+    add ah, 30h     ; Convert to ASCII digit (0-9)
+    cmp ah, 39h     ; Check if it's greater than '9'
+    jle print_digit ; If it's a digit, jump to print
+
+    add ah, 7       ; Convert to ASCII letter (A-F) if necessary
+
+print_digit:
+    mov dl, ah      ; Move the digit to DL
+    mov ah, 02h     ; DOS interrupt to display character
+    int 21h        
+    mov ah, bl      ; Copy the lower byte from BX to AH
+    and ah, 0Fh     ; Mask the upper nibble
+    add ah, 30h     ; Convert to ASCII digit (0-9)
+    cmp ah, 39h     ; Check if it's greater than '9'
+    jle print_second_digit ; If it's a digit, jump to print
+    add ah, 7     
+
+print_second_digit:
+    mov dl, ah      ; Move the digit to DL
+    mov ah, 02h     ; DOS interrupt to display character
+    int 21h       
+    mov al, bh      ; Load the high byte from BX into AL
+    mov ah, al      ; Copy AL to AH
+    and ah, 0F0h    ; Mask the lower nibble
+    shr ah, 4       ; Shift right by 4 to get the upper nibble
+    add ah, 30h     ; Convert to ASCII digit (0-9)
+    cmp ah, 39h     ; Check if it's greater than '9'
+    jle print_third_digit ; If it's a digit, jump to print
+    add ah, 7
+print_third_digit:
+    mov dl, ah      ; Move the digit to DL
+    mov ah, 02h     ; DOS interrupt to display character
+    int 21h       
+    mov ah, al      ; Copy the lower byte from BX to AH
+    and ah, 0Fh     ; Mask the upper nibble
+    add ah, 30h     ; Convert to ASCII digit (0-9)
+    cmp ah, 39h     ; Check if it's greater than '9'
+    jle print_fourth_digit ; If it's a digit, jump to print
+    add ah, 7
+print_fourth_digit:
+    mov dl, ah      ; Move the digit to DL
+    mov ah, 02h     ; DOS interrupt to display character
+    int 21h
+    mov ah, 4Ch     ; Terminate the program
+    int 21h
